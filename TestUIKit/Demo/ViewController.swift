@@ -23,6 +23,47 @@ class ViewController: UIViewController {
             numberItemsInScreen: 2,
             percentSmallItems: 0.3
         ))
+        let stackView = {
+            let v = UIStackView()
+            v.axis = .vertical
+            v.spacing = 16
+            v.alignment = .fill
+            return v
+        }()
+        view.addSubview(stackView)
+        stackView.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).inset(20)
+            make.horizontalEdges.equalToSuperview().inset(40)
+        }
+        let filledButton = FilledButton()
+        filledButton.setTitle("Hello", for: .normal)
+        stackView.addArrangedSubview(filledButton)
+        filledButton.snp.makeConstraints { make in
+            make.height.equalTo(50)
+        }
+        filledButton.addTarget(self, action: #selector(self.onTapFill), for: .touchUpInside)
+        
+        let disableFilledButton = FilledButton()
+        disableFilledButton.setTitle("Disable Hello", for: .normal)
+        disableFilledButton.isEnabled = false
+        stackView.addArrangedSubview(disableFilledButton)
+        disableFilledButton.snp.makeConstraints { make in
+            make.height.equalTo(50)
+        }
+        
+        let outlineButton = OutlineButton()
+        outlineButton.setTitle("Close", for: .normal)
+        stackView.addArrangedSubview(outlineButton)
+        outlineButton.snp.makeConstraints { make in
+            make.height.equalTo(50)
+        }
+        
+        let textField = TextField()
+        stackView.addArrangedSubview(textField)
+    }
+    
+    @objc private func onTapFill() {
+        view.endEditing(true)
     }
 }
 
@@ -50,49 +91,3 @@ extension ViewController: ScrollableSingleSectionExpandViewDelegate {
     func didExpandIndexChange(_ newIndex: Int) {
     }
 }
-
-protocol SubView: UIView {
-    func makePropertyAnimator() -> UIViewPropertyAnimator
-}
-
-class Cell: ScrollableSingleSectionItemView {
-    private let orangeRect = UIView()
-    override func showContent() {
-        orangeRect.alpha = 1
-    }
-    
-    override func hideContent() {
-        orangeRect.alpha = 0
-    }
-    
-    let imgView = UIView()
-    let label = UILabel()
-    let topSepe = UIView()
-    let bottomSepe = UIView()
-    static let colors: [UIColor] = [.red, .green, .blue, .yellow, .purple, .brown, .gray, .magenta]
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setup()
-    }
-    
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        setup()
-    }
-    
-    private func setup() {
-        addSubview(label)
-        orangeRect.backgroundColor = .orange
-        addSubview(orangeRect)
-        orangeRect.snp.makeConstraints { make in
-            make.trailing.bottom.equalToSuperview().inset(20)
-            make.height.width.equalTo(50)
-        }
-        label.snp.makeConstraints { make in
-            make.horizontalEdges.bottom.equalToSuperview().inset(20)
-        }
-        label.textColor = .white
-        label.font = .systemFont(ofSize: 26, weight: .semibold)
-    }
-}
-
