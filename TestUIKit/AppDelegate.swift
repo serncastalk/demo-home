@@ -6,15 +6,52 @@
 //
 
 import UIKit
+import BackgroundTasks
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
-
-
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        /// Pass nil -> System create background serial queue
+        /// Register task handler
+        BGTaskScheduler.shared.register(forTaskWithIdentifier: "com.test.uikit.refresh", using: nil) { task in
+            /// Handle refresh
+            task.expirationHandler = {
+                /// Cancel anything
+                task.setTaskCompleted(success: false)
+            }
+            /// Must call event if task is cancel if not called app will be suspensed -> affect launch performance later
+            task.setTaskCompleted(success: true)
+        }
+        BGTaskScheduler.shared.register(forTaskWithIdentifier: "com.test.uikit.db.clean", using: nil) { task in
+            /// Handle refresh
+            task.expirationHandler = {
+                /// Cancel anything
+                task.setTaskCompleted(success: false)
+            }
+            /// Must call event if task is cancel if not called app will be suspensed -> affect launch performance later
+            task.setTaskCompleted(success: true)
+        }
         return true
+    }
+    
+    func applicationDidEnterBackground(_ application: UIApplication) {
+        let refreshRequest = BGAppRefreshTaskRequest(identifier: "com.test.uikit.refresh")
+        // set minimum time to start
+        refreshRequest.earliestBeginDate = Date(timeIntervalSinceNow: 15 * 60)
+        do {
+            try BGTaskScheduler.shared.submit(refreshRequest)
+        }
+        catch {
+            print("Cound not request : \(error)")
+        }
+        
+        let cleanRequest = BGProcessingTaskRequest(identifier: "com.test.uikit.db.clean")
+        /// Only wake app when has network
+        cleanRequest.requiresNetworkConnectivity = true
+        /// Use if request need lots of power, CPU -> set true => disable CPU monitor
+        cleanRequest.requiresExternalPower = true
     }
 
     // MARK: UISceneSession Lifecycle

@@ -7,7 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		511258BD2D9B923100A35536 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 511258BC2D9B923100A35536 /* SnapKit */; };
+		5101ACE32F43477C00100023 /* MyLibrary in Frameworks */ = {isa = PBXBuildFile; productRef = 5101ACE22F43477C00100023 /* MyLibrary */; };
+		51B54F702ECCD3F40018B1AF /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 51B54F6F2ECCD3F40018B1AF /* SnapKit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -28,6 +29,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		5101AC8C2F4346EA00100023 /* MyLibrary */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = MyLibrary; sourceTree = SOURCE_ROOT; };
 		511258852D9ADA4900A35536 /* TestUIKit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestUIKit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5112589B2D9ADA4A00A35536 /* TestUIKitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TestUIKitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		511258A52D9ADA4A00A35536 /* TestUIKitUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TestUIKitUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -44,6 +46,11 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		5101B7C32F4C32D700100023 /* Components */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Components;
+			sourceTree = "<group>";
+		};
 		511258872D9ADA4900A35536 /* TestUIKit */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
@@ -69,7 +76,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				511258BD2D9B923100A35536 /* SnapKit in Frameworks */,
+				5101ACE32F43477C00100023 /* MyLibrary in Frameworks */,
+				51B54F702ECCD3F40018B1AF /* SnapKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -90,6 +98,13 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5101ACE12F43477C00100023 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		5112587C2D9ADA4900A35536 = {
 			isa = PBXGroup;
 			children = (
@@ -97,6 +112,9 @@
 				5112589E2D9ADA4A00A35536 /* TestUIKitTests */,
 				511258A82D9ADA4A00A35536 /* TestUIKitUITests */,
 				511258862D9ADA4900A35536 /* Products */,
+				5101AC8C2F4346EA00100023 /* MyLibrary */,
+				5101ACE12F43477C00100023 /* Frameworks */,
+				5101B7C32F4C32D700100023 /* Components */,
 			);
 			sourceTree = "<group>";
 		};
@@ -120,17 +138,20 @@
 				511258812D9ADA4900A35536 /* Sources */,
 				511258822D9ADA4900A35536 /* Frameworks */,
 				511258832D9ADA4900A35536 /* Resources */,
+				5161ABDC2ED0B98D0047C8A5 /* ShellScript */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				5101B7C32F4C32D700100023 /* Components */,
 				511258872D9ADA4900A35536 /* TestUIKit */,
 			);
 			name = TestUIKit;
 			packageProductDependencies = (
-				511258BC2D9B923100A35536 /* SnapKit */,
+				51B54F6F2ECCD3F40018B1AF /* SnapKit */,
+				5101ACE22F43477C00100023 /* MyLibrary */,
 			);
 			productName = TestUIKit;
 			productReference = 511258852D9ADA4900A35536 /* TestUIKit.app */;
@@ -194,6 +215,7 @@
 				TargetAttributes = {
 					511258842D9ADA4900A35536 = {
 						CreatedOnToolsVersion = 16.2;
+						LastSwiftMigration = 1620;
 					};
 					5112589A2D9ADA4A00A35536 = {
 						CreatedOnToolsVersion = 16.2;
@@ -215,7 +237,7 @@
 			mainGroup = 5112587C2D9ADA4900A35536;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				511258BB2D9B923100A35536 /* XCRemoteSwiftPackageReference "SnapKit" */,
+				51B54F6E2ECCD3F40018B1AF /* XCRemoteSwiftPackageReference "SnapKit" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 511258862D9ADA4900A35536 /* Products */;
@@ -252,6 +274,26 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		5161ABDC2ED0B98D0047C8A5 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# This is the path to the directory where Xcode puts intermediate build files.\n# We'll save the SIL files here.\n#OUTPUT_DIR=\"${BUILD_DIR}/${CONFIGURATION}-SIL\"\n#mkdir -p \"$OUTPUT_DIR\"\n\n#echo \"Generating SIL files in $OUTPUT_DIR\"\n\n# Loop through all Swift source files in the current target\n# The SRCROOT variable is the root directory of the project.\necho $SRCROOT\nfind \"$SRCROOT\" -name \"*.swift\" | while read -r SOURCE_FILE; do    \n    # Get the filename without the path or extension\n    FILENAME=$(basename \"$SOURCE_FILE\" .swift)\n    echo $SOURCE_FILE\n    # Generate the SIL file for this source file\n    # -emit-sil: tells the compiler to output the optimized SIL.\n    # -o: specifies the output file path.\n    xcrun swiftc -emit-sil \"$SOURCE_FILE\" -o \"$OUTPUT_DIR/$FILENAME.sil\"\ndone\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		511258812D9ADA4900A35536 /* Sources */ = {
@@ -296,9 +338,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = DJP3RUKAP4;
+				DEVELOPMENT_TEAM = 34WZ4VHM89;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = TestUIKit/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -310,9 +353,11 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = jjj.TestUIKit;
+				OTHER_SWIFT_FLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = com.aiavatar.app.uat;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -323,9 +368,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = DJP3RUKAP4;
+				DEVELOPMENT_TEAM = 34WZ4VHM89;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = TestUIKit/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -337,7 +383,8 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = jjj.TestUIKit;
+				OTHER_SWIFT_FLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = com.aiavatar.app.uat;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -402,6 +449,7 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_SWIFT_FLAGS = "";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -458,6 +506,7 @@
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				OTHER_SWIFT_FLAGS = "";
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				VALIDATE_PRODUCT = YES;
@@ -578,7 +627,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		511258BB2D9B923100A35536 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
+		51B54F6E2ECCD3F40018B1AF /* XCRemoteSwiftPackageReference "SnapKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SnapKit/SnapKit.git";
 			requirement = {
@@ -589,9 +638,13 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		511258BC2D9B923100A35536 /* SnapKit */ = {
+		5101ACE22F43477C00100023 /* MyLibrary */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 511258BB2D9B923100A35536 /* XCRemoteSwiftPackageReference "SnapKit" */;
+			productName = MyLibrary;
+		};
+		51B54F6F2ECCD3F40018B1AF /* SnapKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 51B54F6E2ECCD3F40018B1AF /* XCRemoteSwiftPackageReference "SnapKit" */;
 			productName = SnapKit;
 		};
 /* End XCSwiftPackageProductDependency section */

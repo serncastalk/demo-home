@@ -10,9 +10,15 @@ import SnapKit
 
 class TextField: UIView {
     
-    struct Config {
-        var title: String = ""
-    }
+    private let textFieldContainerView = {
+        let v = UIView()
+        v.backgroundColor = UIColor.white.withAlphaComponent(0.2)
+        v.layer.cornerRadius = 14
+        v.layer.borderWidth = 1
+        v.layer.borderColor = UIColor(hex: 0x181818).withAlphaComponent(0.4).cgColor
+        v.clipsToBounds = true
+        return v
+    }()
     
     private let textField = {
         let v = UITextField()
@@ -25,7 +31,14 @@ class TextField: UIView {
         let v = UILabel()
         v.textColor = UIColor(hex: 0x181818)
         v.alpha = 0.5
-        v.font = .systemFont(ofSize: 15, weight: .medium)
+        v.font = .systemFont(ofSize: 14, weight: .medium)
+        return v
+    }()
+    
+    private let errorLabel = {
+        let v = UILabel()
+        v.textColor = UIColor(hex: 0xEE3424)
+        v.font = .systemFont(ofSize: 14, weight: .medium)
         return v
     }()
     
@@ -42,59 +55,99 @@ class TextField: UIView {
     }
     
     private func setup() {
-        let containerView = UIView()
-        containerView.layer.cornerRadius = 14
-        containerView.layer.borderWidth = 1
-        containerView.layer.borderColor = UIColor(hex: 0x181818).withAlphaComponent(0.4).cgColor
-        containerView.clipsToBounds = true
-        addSubview(containerView)
-        containerView.snp.makeConstraints { make in
-            make.height.equalTo(60)
+        let stackViewContainer = {
+            let v = UIStackView()
+            v.axis = .vertical
+            v.spacing = 10
+            return v
+        }()
+        addSubview(stackViewContainer)
+        stackViewContainer.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
-        containerView.addSubview(textField)
+        
+        stackViewContainer.addArrangedSubview(textFieldContainerView)
+        textFieldContainerView.snp.makeConstraints { make in
+            make.height.equalTo(60)
+        }
+        textFieldContainerView.addSubview(textField)
         textField.snp.makeConstraints { make in
             make.horizontalEdges.equalToSuperview().inset(20)
             make.bottom.equalToSuperview().inset(8)
             make.height.equalTo(22)
         }
         
-        addSubview(titleLabel)
+        textFieldContainerView.addSubview(titleLabel)
         titleLabel.snp.makeConstraints { make in
             make.horizontalEdges.equalToSuperview().inset(20)
             make.height.equalTo(20)
             make.top.equalToSuperview().inset(8).priority(999)
             titleLabelCenterConstaint = make.centerY.equalToSuperview().constraint
         }
-        titleLabelCenterConstaint?.activate()
-        textField.alpha = 0
         textField.delegate = self
+        
+        stackViewContainer.addArrangedSubview(errorLabel)
         
         let tapGR = UITapGestureRecognizer(target: self, action: #selector(self._onTap))
         addGestureRecognizer(tapGR)
         
-        titleLabel.text = "Name (*)"
-        
+        setText("")
+        setError(nil)
     }
     
     @objc private func _onTap() {
         textField.becomeFirstResponder()
     }
+    
+    public func setTitle(_ text: String) {
+        titleLabel.text = text
+    }
+    
+    public func setText(_ text: String) {
+        textField.text = text
+        if text.isEmpty {
+            setupUIWhenTextFieldNotFocusOrTextEmpty()
+        } else {
+            setupUIWhenTextFieldFocusOrTextNotEmpty()
+        }
+    }
+    
+    public func setKeyboardType(_ type: UIKeyboardType) {
+        textField.keyboardType = type
+    }
+    
+    public func setError(_ error: Error?) {
+        let isError = error != nil
+        textFieldContainerView.layer.borderColor = isError ? UIColor(hex: 0xE93E21).cgColor : UIColor(hex: 0x181818).withAlphaComponent(0.4).cgColor
+        errorLabel.text = error?.localizedDescription
+    }
 }
 
 extension TextField: UITextFieldDelegate {
+    private func setupUIWhenTextFieldFocusOrTextNotEmpty() {
+        textField.alpha = 1
+        titleLabelCenterConstaint?.deactivate()
+    }
+    
+    private func setupUIWhenTextFieldNotFocusOrTextEmpty() {
+        textField.alpha = 0
+        titleLabelCenterConstaint?.activate()
+    }
+    
     func textFieldDidBeginEditing(_ textField: UITextField) {
         UIView.animate(withDuration: 0.25) {
-            textField.alpha = 1
-            self.titleLabelCenterConstaint?.deactivate()
+            self.setupUIWhenTextFieldFocusOrTextNotEmpty()
             self.layoutIfNeeded()
         }
     }
     
     func textFieldDidEndEditing(_ textField: UITextField) {
         UIView.animate(withDuration: 0.25) {
-            textField.alpha = 0
-            self.titleLabelCenterConstaint?.activate()
+            if (self.textField.text ?? "").isEmpty {
+                self.setupUIWhenTextFieldNotFocusOrTextEmpty()
+            } else {
+                self.setupUIWhenTextFieldFocusOrTextNotEmpty()
+            }
             self.layoutIfNeeded()
         }
     }
