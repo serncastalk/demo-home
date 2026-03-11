@@ -1,16 +1,17 @@
 import UIKit
 import AVFoundation
 import SnapKit
+import Combine
 
 class FullScreenPlayerViewController: UIViewController {
 
-    // MARK: - Properties
-    private let player: AVPlayer
-    private var playerLayer: AVPlayerLayer?
+    private var playerLayer: AVPlayerLayer
+    private var maskFrame: CGRect
     
     private lazy var transitionAnimator = VideoAnimatedTransitioning()
     
     var onDismiss: (() -> Void)?
+    var onVideoLayerReady: (() -> Void)?
 
     private let dismissButton: UIButton = {
         let btn = UIButton(type: .system)
@@ -22,9 +23,9 @@ class FullScreenPlayerViewController: UIViewController {
     }()
 
     // MARK: - Init
-    init(player: AVPlayer, playerLayer: AVPlayerLayer?) {
-        self.player = player
+    init(playerLayer: AVPlayerLayer, maskFrame: CGRect) {
         self.playerLayer = playerLayer
+        self.maskFrame = maskFrame
         super.init(nibName: nil, bundle: nil)
         self.transitioningDelegate = self
     }
@@ -36,14 +37,14 @@ class FullScreenPlayerViewController: UIViewController {
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .black
         setupPlayer()
         setupDismissButton()
+        
     }
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-//        playerLayer?.frame = view.bounds
+        playerLayer.frame = view.bounds
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -59,23 +60,22 @@ class FullScreenPlayerViewController: UIViewController {
             $0.width.height.equalTo(40)
         }
     }
+    
+    var cancellable: AnyCancellable?
 
     @objc private func dismissVC() {
-        dismiss(animated: false, completion: onDismiss)
+        dismiss(animated: true, completion: onDismiss)
     }
-
-    // MARK: - Setup
+    
+    // MARK: - Setup AVPlayer
     private func setupPlayer() {
-//        playerLayer = AVPlayerLayer(player: player)
-//        playerLayer?.videoGravity = .resizeAspectFill
-//        playerLayer?.frame = UIScreen.main.bounds
-        view.layer.addSublayer(playerLayer!)
-
-        //player.play()
+        playerLayer.frame = view.bounds
+        view.layer.insertSublayer(playerLayer, at: 0)
     }
-
+    
     deinit {
         //player.pause()
+        cancellable?.cancel()
     }
 }
 
@@ -83,6 +83,7 @@ extension FullScreenPlayerViewController: UIViewControllerTransitioningDelegate 
     
     public func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> (any UIViewControllerAnimatedTransitioning)? {
         transitionAnimator.state = .present
+        transitionAnimator.maskFrame = maskFrame
         return transitionAnimator
     }
     
@@ -98,6 +99,7 @@ fileprivate final class VideoAnimatedTransitioning: NSObject, UIViewControllerAn
         case dismiss
     }
     var state: State = .present
+    var maskFrame: CGRect = .zero
     
     func transitionDuration(using transitionContext: (any UIViewControllerContextTransitioning)?) -> TimeInterval {
         0.25
@@ -108,14 +110,23 @@ fileprivate final class VideoAnimatedTransitioning: NSObject, UIViewControllerAn
         switch state {
         case .present:
             let toView = transitionContext.view(forKey: .to)!
-            let toVC = transitionContext.viewController(forKey: .to)!
-            toView.frame = transitionContext.finalFrame(for: toVC)
+            let mask = UIView()
+            mask.backgroundColor = .black
+            mask.frame = maskFrame
+            mask.layer.cornerRadius = 20
+            mask.clipsToBounds = true
+            toView.mask = mask
             transitionContext.containerView.addSubview(toView)
-            transitionContext.completeTransition(true)
+            toView.frame = transitionContext.containerView.bounds
+            UIView.animate(withDuration: 0.26, animations: {
+                mask.frame = transitionContext.containerView.bounds
+            }, completion: { _ in
+                transitionContext.completeTransition(true)
+            })
         case .dismiss:
             let fromView = transitionContext.view(forKey: .from)!
             UIView.animate(withDuration: duration) {
-                fromView.alpha = 0
+                fromView.mask?.frame = self.maskFrame
             } completion: { isComplete in
                 let isCompleteTransition = isComplete && !transitionContext.transitionWasCancelled
                 if isCompleteTransition {

@@ -19,7 +19,7 @@ class VideoPlayerViewController: UIViewController {
 
     private let videoView: UIView = {
         let v = UIView()
-        v.backgroundColor = .black
+//        v.backgroundColor = .red
         return v
     }()
 
@@ -35,14 +35,15 @@ class VideoPlayerViewController: UIViewController {
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .black
         setupUI()
         setupPlayer()
     }
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        playerLayer?.frame = videoView.bounds
+        print("SERN :: ", view.safeAreaLayoutGuide.frame(in: view)?.insetBy(dx: 20, dy: 20) ?? .zero)
+        playerLayer?.frame = view.bounds
+        videoView.mask!.frame = view.safeAreaLayoutGuide.frame(in: view)?.insetBy(dx: 20, dy: 20) ?? .zero
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -53,22 +54,15 @@ class VideoPlayerViewController: UIViewController {
     // MARK: - Setup UI
     private func setupUI() {
         view.backgroundColor = .yellow
-        view.addSubview(containerView)
-        containerView.addSubview(videoView)
+
+        view.addSubview(videoView)
         view.addSubview(fullscreenButton)
 
         fullscreenButton.addTarget(self, action: #selector(openFullscreen), for: .touchUpInside)
 
         // Container inset 20pt from safe area on all sides
-        containerView.snp.makeConstraints {
-            $0.edges.equalTo(view.safeAreaLayoutGuide).inset(20)
-        }
-
-        // videoView fills entire screen but lives inside containerView
         videoView.snp.makeConstraints {
-            $0.center.equalTo(containerView)
-            $0.width.equalTo(view)
-            $0.height.equalTo(view)
+            $0.edges.equalToSuperview()
         }
 
         // Fullscreen button bottom-right of safe area
@@ -96,6 +90,12 @@ class VideoPlayerViewController: UIViewController {
         playerLayer?.videoGravity = .resizeAspectFill
         playerLayer?.frame = videoView.bounds
         videoView.layer.addSublayer(playerLayer!)
+        let mask = UIView()
+        mask.layer.cornerRadius = 20
+        mask.clipsToBounds = true
+//        mask.frame = .init(x: 100, y: 100, width: 200, height: 200)
+        mask.backgroundColor = .black
+        videoView.mask = mask
 
         NotificationCenter.default.addObserver(
             self, selector: #selector(videoDidEnd),
@@ -107,31 +107,15 @@ class VideoPlayerViewController: UIViewController {
 
     // MARK: - Fullscreen
     @objc private func openFullscreen() {
-        containerView.snp.remakeConstraints { make in
-            make.edges.equalToSuperview()
-        }
-        UIView.animate(withDuration: 0.26, delay: 0, options: .curveEaseInOut, animations: {
-            self.containerView.layoutIfNeeded()
-        }, completion: { [weak self] _ in
-            guard let self, let player else { return }
-            //self.videoView.alpha = 0
-            let vc = FullScreenPlayerViewController(player: player, playerLayer: playerLayer)
-            vc.modalPresentationStyle = .overCurrentContext
-//            vc.modalTransitionStyle = .crossDissolve
-            
-            present(vc, animated: true)
-            vc.onDismiss = { [weak self] in
-                guard let self = self else { return }
-                self.videoView.layer.addSublayer(playerLayer!)
-                self.containerView.snp.remakeConstraints {
-                    $0.edges.equalTo(self.view.safeAreaLayoutGuide).inset(20)
-                }
-                UIView.animate(withDuration: 0.26, animations: {
-                    self.containerView.layoutIfNeeded()
-                })
-            }
-        })
+        let vc = FullScreenPlayerViewController(playerLayer: playerLayer!, maskFrame: videoView.mask!.frame)
+        vc.modalPresentationStyle = .custom
+        vc.modalTransitionStyle = .crossDissolve
         
+        present(vc, animated: true)
+        vc.onDismiss = { [weak self] in
+            guard let self = self else { return }
+            self.videoView.layer.addSublayer(playerLayer!)
+        }
     }
 
     // MARK: - Loop
